@@ -2,6 +2,16 @@
 
 An [Agent Skill](https://agentskills.io) that rewrites a bolted-on feature so it reads as if it was always part of the original design.
 
+![A video export bolted on with an isVideo flag and a copied exporter, next to the native version where mp4 is one more entry in the existing exporter table](assets/before-after.png)
+
+```sh
+npx skills add Sloydai/make-native
+```
+
+Works with Claude Code, Codex, opencode, Kiro, and GitHub Copilot. See [Install](#install) for manual setup.
+
+Made by [@Edesberg](https://x.com/Edesberg) at [Sloyd](https://sloyd.ai). If it saves you a refactor, give it a star.
+
 Coding agents (and people in a hurry) tend to add features with the least possible disturbance: an `if (newThing)` here, a flag there, a copy of an existing component for the new variant, and tests that prove nothing else changed. Each change is safe on its own. Together they leave code that only makes sense if you know the order it was written in.
 
 `make-native` takes the feature diff and asks: if the original author had known about this feature on day one, what would the code look like? Then it writes that version, deletes the workarounds, and rewrites the tests to match.
