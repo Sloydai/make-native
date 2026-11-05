@@ -2,7 +2,7 @@
 
 An [Agent Skill](https://agentskills.io) that rewrites a bolted-on feature so it reads as if it was always part of the original design.
 
-![make-native: new code that looks like it was always there. One real run on sloyd.ai: 1 to 7 call sites on one contract, 1 to 17 links localized, 2 to 1 copies of the same rule](assets/before-after.png)
+![Your agent bolted it on: a save function with an isVideo flag and a copied gif exporter. make-native makes it native: mp4 is one more entry in the existing SAVERS table. 4x more PRs pass first review.](assets/before-after.png)
 
 ```sh
 npx skills add Sloydai/make-native
