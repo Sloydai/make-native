@@ -2,7 +2,7 @@
 
 An [Agent Skill](https://agentskills.io) that rewrites a bolted-on feature so it reads as if it was always part of the original design.
 
-![A video export bolted on with an isVideo flag and a copied exporter, next to the native version where mp4 is one more entry in the existing exporter table](assets/before-after.png)
+![make-native: new code that looks like it was always there. One real run on sloyd.ai: 1 to 7 call sites on one contract, 1 to 17 links localized, 2 to 1 copies of the same rule](assets/before-after.png)
 
 ```sh
 npx skills add Sloydai/make-native
@@ -34,6 +34,24 @@ It looks for these smells:
 - a second system for a concern that already has one (cost tracking, logging, retries, config)
 
 It is meant for features only. Bug fixes should stay minimal, so don't run it on a bug-fix commit.
+
+## Real example
+
+We ran it on the feature that added the [What is Sloyd](https://www.sloyd.ai/what-is-sloyd) page to sloyd.ai. It found two bolted-on shapes.
+
+**An optional prop that only one caller used.** The page's link component took an optional `locale`, and only 1 of its 7 call sites passed it. Every other link sent German, Japanese, and other non-English readers to the English page. make-native made `locale` required and resolved each link through the same coverage check the sitemap and hreflang already use:
+
+```diff
+-function OwningAnchor({ link, locale }: { link: OverviewLink; locale?: string }) {
++function OwningAnchor({ link, locale }: { link: OverviewLink; locale: string }) {
+   ...
+-  const pinned = locale && isLocale(locale) && locale !== DEFAULT_LOCALE ? locale : undefined
++  const pinned = locale !== DEFAULT_LOCALE && hasCoverage(link.href, locale) ? locale : undefined
+```
+
+Links that open in the reader's language went from 1 to 17 of 28. The other 11 point to English-only pages and stay as they were.
+
+**The same rule written twice.** The two LLM indexes (`/llms.txt` and `llms-full.txt`) each had their own copy of "link this page as HTML, not as Markdown", one through a helper that existed only for this page. Both now read the list from the module that already owned the opposite rule. `/llms.txt` came out byte-identical, and `llms-full.txt` gained a page it had been missing.
 
 ## Install
 
